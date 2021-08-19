@@ -27,6 +27,6 @@ jobs:
 
       # Runs a set of commands using the runners shell
       - name: Bump Version
-        run: bash .github/workflows/scripts/bump_version.sh
+        run: bash .github/workflows/bump.sh
         env:
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
