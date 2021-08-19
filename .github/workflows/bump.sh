@@ -15,7 +15,7 @@ initialTag="false"
 # if there are none, start tags at 1.0.0
 if [ -z "$latestTag" ]
 then
-    log=$(git log --pretty=oneline)
+    log=$(git log -p --pretty=oneline)
     latestTag=1.0.0
     echo "Initial Tag"
     initialTag="true"
