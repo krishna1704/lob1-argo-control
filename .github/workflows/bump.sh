@@ -15,13 +15,14 @@ initialTag="false"
 # if there are none, start tags at 1.0.0
 if [ -z "$latestTag" ]
 then
-    log=$(git log -p --pretty=oneline)
+    log=$(git log --merges --first-parent)
     latestTag=1.0.0
     echo "Initial Tag"
     initialTag="true"
 else
-    log=$(git log $latestTag..HEAD --pretty=oneline)
+    log=$(git log $latestTag..HEAD --merges --first-parent)
     echo "Tags already exist"
+    wait
 fi
 
 # Split Tag version in major, minor and patch
@@ -50,13 +51,14 @@ esac
 
 # Forming new version for Tag
 new="$majorVersion.$minorVersion.$patchVersion"
+new_rc=$new".rc"
 
 # Printing out new tag to be created
 echo "New Tag to be created - $new"
 
 # POST a new ref to repo via Github API
 #curl -s -X POST https://api.github.com/repos/$REPO_OWNER/$repo/git/refs \
-curl -s -X POST https://api.github.com/repos/krishna1704/lob1-argo-control/git/refs \
+curl -s -X POST https://api.github.com/repos/$GITHUB_REPOSITORY/git/refs \
 -H "Authorization: token $ACCESS_TOKEN" \
 -d @- << EOF
 {
@@ -75,13 +77,24 @@ if [[ "$log" == *\[pre-release\]* ]]
 then
     createPreRelease=true
 fi
+echo "creating release candidate"
+echo $new_rc
+curl -s -X POST https://api.github.com/repos/$GITHUB_REPOSITORY/releases \
+-H "Authorization: token $ACCESS_TOKEN" \
+-d @- << EOF
+{
+  "tag_name": "$new_rc",
+}
+EOF
+
 
 if [[ "$log" == *\[release\]* || "$log" == *\[pre-release\]* ]]
 then
     echo "Going to create"
-    curl -s -X POST https://api.github.com/repos/krishna1704/lob1-argo-control/releases \
+    curl -s -X POST https://api.github.com/repos/$GITHUB_REPOSITORY/releases \
     -H "Authorization: token $ACCESS_TOKEN" \
     -d @- << EOF
+    
         {
             "tag_name": "$new",
             "prerelease": $createPreRelease
