@@ -56,7 +56,7 @@ echo "New Tag to be created - $new"
 
 # POST a new ref to repo via Github API
 #curl -s -X POST https://api.github.com/repos/$REPO_OWNER/$repo/git/refs \
-curl -s -X POST https://api.github.com/repos/$GITHUB_REPOSITORY/git/refs \
+curl -s -X POST https://api.github.com/repos/krishna1704/lob1-argo-control/git/refs \
 -H "Authorization: token $ACCESS_TOKEN" \
 -d @- << EOF
 {
@@ -79,7 +79,7 @@ fi
 if [[ "$log" == *\[release\]* || "$log" == *\[pre-release\]* ]]
 then
     echo "Going to create"
-    curl -s -X POST https://api.github.com/repos/$GITHUB_REPOSITORY/releases \
+    curl -s -X POST https://api.github.com/repos/krishna1704/lob1-argo-control/releases \
     -H "Authorization: token $ACCESS_TOKEN" \
     -d @- << EOF
         {
